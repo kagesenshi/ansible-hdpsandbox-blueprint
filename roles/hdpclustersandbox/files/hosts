@@ -1,0 +1,6 @@
+172.20.10.10 edge.cluster edge
+172.20.10.11 master1.cluster master1
+172.20.10.12 master2.cluster master2
+172.20.10.13 master3.cluster master3
+172.20.10.14 worker1.cluster worker1
+172.20.10.15 worker2.cluster worker2

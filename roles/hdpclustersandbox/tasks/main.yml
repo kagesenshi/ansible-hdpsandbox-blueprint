@@ -1,0 +1,102 @@
+---
+# tasks file for hdpcluster
+
+- name: set SELinux to permissive
+  selinux:
+    state: permissive
+    policy: targeted
+
+- name: Install EPEL
+  yum: 
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - epel-release
+
+
+- name: Install base system packages
+  yum: 
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - docker
+    - python-docker-py
+    - python-docker-pycreds
+    - python-docker-scripts
+    - python-dockerfile-parse
+    - cockpit
+    - cockpit-ws
+    - cockpit-docker
+    - cockpit-dashboard
+    - ntp
+    - ntpdate
+
+- name: Setup cockpit
+  systemd:
+    name: cockpit.socket
+    state: started
+    enabled: yes
+
+- name: disable firewall
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: enable docker
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: setup ntpd
+  systemd: 
+    name: ntpd
+    state: started
+    enabled: yes
+
+- name: load systemd docker image
+  docker_image:
+    name: kagesenshi/centos-systemd-sshd
+    tag: latest
+
+- name: create docker network
+  docker_network:
+    name: cluster
+    ipam_options:
+      subnet: "172.20.10.0/24"
+      gateway: "172.20.10.1"
+
+- name: create initial nodes
+  docker_container:
+    name: "{{ item.name }}"
+    domainname: "cluster"
+    hostname: "{{ item.name }}"
+    image: kagesenshi/centos-systemd-sshd
+    networks:
+      - name: cluster
+        ipv4_address: "{{ item.ip }}"
+  with_items:
+    - name: edge
+      ip: 172.20.10.10
+    - name: master1
+      ip: 172.20.10.11
+    - name: master2
+      ip: 172.20.10.12
+    - name: master3
+      ip: 172.20.10.13
+    - name: worker1
+      ip: 172.20.10.14
+    - name: worker2
+      ip: 172.20.10.15
+
+- name: Install hosts file
+  copy: 
+    src: hosts
+    dest: /etc/hosts
+
+- name: install ssh_config file
+  copy:
+    src: ssh_config
+    dest: /etc/ssh/ssh_config
+    mode: 0644
