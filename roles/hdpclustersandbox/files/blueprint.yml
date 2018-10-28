@@ -1,0 +1,41 @@
+Blueprints:
+  blueprint_name: sandbox
+  stack_name: HDP
+  stack_version: "2.6"
+configurations: []
+host_groups:
+  - name: master1
+    components: 
+    - name: METRICS_COLLECTOR
+    - name: METRICS_GRAFANA
+    - name: INFRA_SOLR
+    - name: INFRA_SOLR_CLIENT
+    - name: METRICS_MONITOR
+    - name: METRICS_GRAFANA
+    - name: NAMENODE
+    - name: SECONDARY_NAMENODE
+    - name: HDFS_CLIENT
+    - name: HCAT
+    - name: WEBHCAT_SERVER
+    - name: HIVE_CLIENT
+    - name: HIVE_METASTORE
+    - name: HIVE_SERVER
+    - name: HIVE_SERVER_INTERACTIVE
+    - name: MYSQL_SERVER
+    - name: HISTORYSERVER
+    - name: MAPREDUCE2_CLIENT
+    - name: SLIDER
+    - name: SQOOP
+    - name: TEZ_CLIENT
+    - name: APP_TIMELINE_SERVER
+    - name: RESOURCEMANAGER
+    - name: YARN_CLIENT
+    - name: ZOOKEEPER_CLIENT
+    - name: ZOOKEEPER_SERVER
+    cardinality: 1
+  - name: worker
+    components: 
+    - name: DATANODE
+    - name: NODEMANAGER
+
+    

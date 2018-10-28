@@ -32,6 +32,8 @@
     - ntpdate
     - ansible
     - squid
+    - python-requests
+    - python2-pyyaml
 
 - name: Setup cockpit
   systemd:
@@ -126,8 +128,14 @@
   with_items:
     - init-ambari.sh
     - ambari-agent.ini
+    - deploy-blueprint.py
+    - blueprint.yml
+    - cluster.yml
 
 - name: deploy ambari
   command:  ansible-playbook -i docker-inventory ambari-playbook.yml
   args:
     chdir: /root
+
+#- name: deploy blueprint
+#  command: python /root/deploy-blueprint.py

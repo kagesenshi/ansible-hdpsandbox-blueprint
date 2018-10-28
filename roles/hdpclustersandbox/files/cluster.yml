@@ -1,0 +1,9 @@
+blueprint: sandbox
+default_password: sandbox
+host_groups:
+- name: master1
+  hosts:
+    - fqdn: master1.cluster
+- name: worker
+  hosts:
+    - fqdn: worker1.cluster
