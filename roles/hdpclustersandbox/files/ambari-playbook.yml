@@ -46,6 +46,14 @@
       name: ambari-server.service
       state: started
       enabled: yes
+
+  - name: Wait for ambari to start up
+    wait_for:
+      host: 172.20.10.1
+      port: 8080
+      delay: 10
+      state: drained
+      timeout: 600
   
   
 - hosts: agent
