@@ -48,4 +48,39 @@
       enabled: yes
   
   
-      
+- hosts: agent
+  tasks: 
+
+  - name: install ambari repo
+    get_url:
+        url: http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.6.2.2/ambari.repo
+        dest: /etc/yum.repos.d/ambari.repo
+
+  - yum:
+        name: "{{ packages }}"
+    vars:
+        packages:
+        - epel-release
+
+  - yum:
+        name: "{{ packages }}"
+    vars:
+        packages:
+        - ambari-agent
+        - initscripts
+        - net-tools
+        - wget
+        - curl
+        - which
+
+  - name: Copy ambari-agent config
+    copy:
+      src: ambari-agent.ini
+      dest: /etc/ambari-agent/conf/ambari-agent.ini
+
+  - name: Setup ambari-agent
+    systemd:
+      name: ambari-agent.service
+      state: started
+      enabled: yes
+ 

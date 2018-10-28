@@ -121,8 +121,11 @@
 
 - name: upload ambari setup files
   copy:
-    src: init-ambari.sh
-    dest: /root/init-ambari.sh
+    src: "{{ item }}"
+    dest: "/root/{{ item }}"
+  with_items:
+    - init-ambari.sh
+    - ambari-agent.ini
 
 - name: deploy ambari
   command:  ansible-playbook -i docker-inventory ambari-playbook.yml
