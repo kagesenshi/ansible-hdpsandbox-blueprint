@@ -81,6 +81,7 @@
     networks:
       - name: cluster
         ipv4_address: "{{ item.ip }}"
+    purge_networks: yes
   with_items:
     - name: edge
       ip: 172.20.10.10
@@ -138,5 +139,7 @@
   args:
     chdir: /root
 
-#- name: deploy blueprint
-#  command: python /root/deploy-blueprint.py
+- name: deploy blueprint
+  command: python /root/deploy-blueprint.py
+  args:
+    creates: /root/ambari-cluster-deployed

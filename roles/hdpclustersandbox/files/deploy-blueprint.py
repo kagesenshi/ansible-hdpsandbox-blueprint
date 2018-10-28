@@ -53,3 +53,6 @@ post('blueprints/sandbox', data=json.dumps(blueprint),
 cluster = yaml.load(open(here('cluster.yml')))
 pprint(post('clusters/SandboxCluster', data=json.dumps(cluster),
             headers={'Content-Type': 'text/plain'}))
+
+with open('/root/ambari-cluster-deployed', 'w') as f:
+    f.write('ok')
