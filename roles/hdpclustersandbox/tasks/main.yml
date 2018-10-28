@@ -30,6 +30,8 @@
     - cockpit-dashboard
     - ntp
     - ntpdate
+    - ansible
+    - squid
 
 - name: Setup cockpit
   systemd:
@@ -100,3 +102,29 @@
     src: ssh_config
     dest: /etc/ssh/ssh_config
     mode: 0644
+
+- name: setup squid
+  systemd:
+    name: squid
+    state: started
+    enabled: yes
+
+- name: copy ambari playbook
+  copy:
+    src: ambari-playbook.yml
+    dest: /root/ambari-playbook.yml
+
+- name: copy docker inventory
+  copy:
+    src: docker-inventory
+    dest: /root/docker-inventory
+
+- name: upload ambari setup files
+  copy:
+    src: init-ambari.sh
+    dest: /root/init-ambari.sh
+
+- name: deploy ambari
+  command:  ansible-playbook -i docker-inventory ambari-playbook.yml
+  args:
+    chdir: /root

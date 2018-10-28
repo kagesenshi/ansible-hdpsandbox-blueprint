@@ -1,0 +1,51 @@
+- hosts: ambari
+  tasks:
+
+  - name: install ambari repo
+    get_url:
+        url: http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.6.2.2/ambari.repo
+        dest: /etc/yum.repos.d/ambari.repo
+
+  - yum:
+        name: "{{ packages }}"
+    vars:
+        packages:
+        - epel-release
+
+  - yum:
+        name: "{{ packages }}"
+    vars:
+        packages:
+        - ambari-server
+        - postgresql-server
+        - postgresql-jdbc
+        - initscripts
+        - net-tools
+        - wget
+        - curl
+        - which
+
+  - name: Copy ambari initialization script
+    copy:
+      src: init-ambari.sh
+      dest: /root/init-ambari.sh
+  
+  - name: Initialize ambari
+    command: bash /root/init-ambari.sh
+    args:
+      creates: /var/ambari-init-executed
+      
+  - name: Setup postgresql
+    systemd:
+      name: postgresql.service
+      state: started
+      enabled: yes
+
+  - name: Setup ambari-server
+    systemd:
+      name: ambari-server.service
+      state: started
+      enabled: yes
+  
+  
+      
