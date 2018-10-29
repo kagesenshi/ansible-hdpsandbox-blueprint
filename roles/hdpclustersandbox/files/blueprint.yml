@@ -20,18 +20,56 @@ configurations:
         yarn.resourcemanager.scheduler.monitor.enable: "true"
   - hive-interactive-site:
       properties:
-        enable_hive_interactive: "true"
+        hive.auto.convert.join.noconditionaltask.size: "572522496"
         hive.server2.tez.sessions.per.default.queue: "5"
+        hive.llap.daemon.queue.name: "llap"
         hive.llap.daemon.yarn.container.mb: "2048"
         hive.llap.io.memory.size: "1024"
+        hive.llap.io.threadpool.size: "1"
+        hive.server2.tez.default.queues: "llap"
+        hive.tez.container.size: "2048"
   - hive-interactive-env:
       properties:
+        enable_hive_interactive: "true"
         llap_heap_size: "1024"
+        hive_heapsize: "512"
   - tez-site:
       properties:
         tez.am.resource.memory.mb: "1024"
         tez.grouping.max-size: "939524096"
         tez.tez-ui.history-url.base: http://master1.cluster:8080/#/main/view/TEZ/tez_cluster_instance
+  - tez-interactive-size:
+      properties:
+        tez.am.resource.memory.mb: "1024"
+        tez.runtime.io.sort.mb: "546"
+        tez.runtime.unordered.output.buffer.size-mb: "122"
+  - capacity-scheduler:
+      properties:
+        yarn.scheduler.capacity.default.minimum-user-limit-percent: "100"
+        yarn.scheduler.capacity.maximum-am-resource-percent: "0.2"
+        yarn.scheduler.capacity.maximum-applications: "10000"
+        yarn.scheduler.capacity.node-locality-delay: "40"
+        yarn.scheduler.capacity.root.accessible-node-labels: "*"
+        yarn.scheduler.capacity.root.acl_administer_queue: "*"
+        yarn.scheduler.capacity.root.capacity: "100"
+        yarn.scheduler.capacity.root.default.acl_administer_jobs: "*"
+        yarn.scheduler.capacity.root.default.acl_submit_applications: "*"
+        yarn.scheduler.capacity.root.default.capacity: "0.0"
+        yarn.scheduler.capacity.root.default.maximum-capacity: "0.0"
+        yarn.scheduler.capacity.root.default.state: RUNNING
+        yarn.scheduler.capacity.root.default.user-limit-factor: 1
+        yarn.scheduler.capacity.root.llap.acl_administer_queue: hive
+        yarn.scheduler.capacity.root.llap.acl_submit_applications: hive
+        yarn.scheduler.capacity.root.llap.capacity: "100.0"
+        yarn.scheduler.capacity.root.llap.maximum-am-resource-percent: "1"
+        yarn.scheduler.capacity.root.llap.maximum-capacity: "100.0"
+        yarn.scheduler.capacity.root.llap.minimum-user-limit-percent: "100"
+        yarn.scheduler.capacity.root.llap.ordering-policy: fifo
+        yarn.scheduler.capacity.root.llap.priority: "10"
+        yarn.scheduler.capacity.root.llap.state: RUNNING
+        yarn.scheduler.capacity.root.llap.user-limit-factor: "1"
+        yarn.scheduler.capacity.root.ordering-policy: priority-utilization
+        yarn.scheduler.capacity.root.queues: default,llap
 host_groups:
   - name: edge
     components:
