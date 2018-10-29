@@ -5,7 +5,7 @@ ansible script that :
 
  * create 5 docker containers with systemd
  * install ambari in master1 container
- * install ambari-agent in all containers
+ * install ambari-agent in 2 containers
  * install use ambari blueprint to deploy 2 node hdp cluster on 2 containers
 
 Usage
