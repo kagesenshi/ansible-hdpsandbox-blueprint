@@ -3,6 +3,10 @@ Blueprints:
   stack_name: HDP
   stack_version: "2.6"
 configurations: 
+  - core-site:
+      properties:
+        hadoop.proxyuser.root.hosts: "*"
+        hadoop.proxyuser.root.groups: "*"
   - hadoop-env:
       properties:
         hadoop_heapsize: "512"
@@ -16,6 +20,7 @@ configurations:
         yarn.resourcemanager.scheduler.monitor.enable: "true"
   - hive-interactive-site:
       properties:
+        enable_hive_interactive: "true"
         hive.server2.tez.sessions.per.default.queue: "5"
         hive.llap.daemon.yarn.container.mb: "2048"
         hive.llap.io.memory.size: "1024"
@@ -26,6 +31,7 @@ configurations:
       properties:
         tez.am.resource.memory.mb: "1024"
         tez.grouping.max-size: "939524096"
+        tez.tez-ui.history-url.base: http://master1.cluster:8080/#/main/view/TEZ/tez_cluster_instance
 host_groups:
   - name: edge
     components:
