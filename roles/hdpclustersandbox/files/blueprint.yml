@@ -2,8 +2,42 @@ Blueprints:
   blueprint_name: sandbox
   stack_name: HDP
   stack_version: "2.6"
-configurations: []
+configurations: 
+  - hadoop-env:
+      properties:
+        hadoop_heapsize: "512"
+        namenode_heapsize: 512m
+        dtnode_heapsize: 512m
+  - hdfs-site:
+      properties:
+        dfs.replication: "1"
+  - yarn-site:
+      properties:
+        yarn.resourcemanager.scheduler.monitor.enable: "true"
+  - hive-interactive-site:
+      properties:
+        hive.server2.tez.sessions.per.default.queue: "5"
+        hive.llap.daemon.yarn.container.mb: "2048"
+        hive.llap.io.memory.size: "1024"
+  - hive-interactive-env:
+      properties:
+        llap_heap_size: "1024"
+  - tez-site:
+      properties:
+        tez.am.resource.memory.mb: "1024"
+        tez.grouping.max-size: "939524096"
 host_groups:
+  - name: edge
+    components:
+    - name: HDFS_CLIENT
+    - name: HIVE_CLIENT
+    - name: MAPREDUCE2_CLIENT
+    - name: SQOOP
+    - name: PIG
+    - name: TEZ_CLIENT
+    - name: YARN_CLIENT
+    - name: ZOOKEEPER_CLIENT
+    - name: METRICS_MONITOR
   - name: master1
     components: 
     - name: METRICS_COLLECTOR
@@ -26,6 +60,7 @@ host_groups:
     - name: MAPREDUCE2_CLIENT
     - name: SLIDER
     - name: SQOOP
+    - name: PIG
     - name: TEZ_CLIENT
     - name: APP_TIMELINE_SERVER
     - name: RESOURCEMANAGER
