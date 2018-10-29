@@ -29,4 +29,8 @@ Deploy
 ansible-playbook -i inventory.yml playbook.yml
 ```
 
+Access cockpit at VM's HTTPS port 9090, and a Squid proxy at HTTP port 3128
 
+Ambari is at http://master1.cluster:8080 through the proxy server
+
+Default root password in containers is `password`. Default Ambari admin password is `admin`
