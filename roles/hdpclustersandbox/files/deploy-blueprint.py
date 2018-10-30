@@ -22,6 +22,8 @@ def query(path, method, auth, data=None, json=None, headers=None):
         headers=headers,
         json=json
     )
+    if int(res.status_code / 100) != 2:
+        raise Exception("Error processing: %s. %s" % (path, res.text))
     if res.text:
         return res.json()
     return {}

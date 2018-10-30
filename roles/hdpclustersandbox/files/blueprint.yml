@@ -38,7 +38,7 @@ configurations:
         tez.am.resource.memory.mb: "1024"
         tez.grouping.max-size: "939524096"
         tez.tez-ui.history-url.base: http://master1.cluster:8080/#/main/view/TEZ/tez_cluster_instance
-  - tez-interactive-size:
+  - tez-interactive-site:
       properties:
         tez.am.resource.memory.mb: "1024"
         tez.runtime.io.sort.mb: "546"
