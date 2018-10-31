@@ -1,12 +1,14 @@
 Blueprints:
   blueprint_name: sandbox
   stack_name: HDP
-  stack_version: "2.6"
+  stack_version: "2.5"
 configurations: 
   - core-site:
       properties:
         hadoop.proxyuser.root.hosts: "*"
         hadoop.proxyuser.root.groups: "*"
+        fs.defaultFS : hdfs://cluster
+        ha.zookeeper.quorum: "%HOSTGROUP::master1%:2181,%HOSTGROUP::master2%:2181,%HOSTGROUP::master3%:2181"
   - hadoop-env:
       properties:
         hadoop_heapsize: "512"
@@ -15,34 +17,48 @@ configurations:
   - hdfs-site:
       properties:
         dfs.replication: "1"
+        dfs.client.failover.proxy.provider.cluster : "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider"
+        dfs.ha.automatic-failover.enabled : "true"
+        dfs.ha.fencing.methods : shell(/bin/true)
+        dfs.ha.namenodes.cluster : nn1,nn2
+        dfs.namenode.http-address : "%HOSTGROUP::master1%:50070"
+        dfs.namenode.http-address.cluster.nn1 : "%HOSTGROUP::master1%:50070"
+        dfs.namenode.http-address.cluster.nn2 : "%HOSTGROUP::master2%:50070"
+        dfs.namenode.https-address : "%HOSTGROUP::master1%:50470"
+        dfs.namenode.https-address.cluster.nn1 : "%HOSTGROUP::master1%:50470"
+        dfs.namenode.https-address.cluster.nn2 : "%HOSTGROUP::master2%:50470"
+        dfs.namenode.rpc-address.cluster.nn1 : "%HOSTGROUP::master1%:8020"
+        dfs.namenode.rpc-address.cluster.nn2 : "%HOSTGROUP::master2%:8020"
+        dfs.namenode.shared.edits.dir : "qjournal://%HOSTGROUP::master1%:8485;%HOSTGROUP::master2%:8485;%HOSTGROUP::master3%:8485/cluster"
+        dfs.nameservices : cluster
   - yarn-site:
       properties:
         yarn.resourcemanager.scheduler.monitor.enable: "true"
-  - hive-interactive-site:
-      properties:
-        hive.auto.convert.join.noconditionaltask.size: "572522496"
-        hive.server2.tez.sessions.per.default.queue: "1"
-        hive.llap.daemon.queue.name: "llap"
-        hive.llap.daemon.yarn.container.mb: "2048"
-        hive.llap.io.memory.size: "512"
-        hive.llap.io.threadpool.size: "1"
-        hive.server2.tez.default.queues: "llap"
-        hive.tez.container.size: "2048"
-  - hive-interactive-env:
-      properties:
-        enable_hive_interactive: "true"
-        llap_heap_size: "1024"
-        hive_heapsize: "512"
+#	- hive-interactive-site:
+#			properties:
+#				hive.auto.convert.join.noconditionaltask.size: "572522496"
+#				hive.server2.tez.sessions.per.default.queue: "1"
+#				hive.llap.daemon.queue.name: "llap"
+#				hive.llap.daemon.yarn.container.mb: "2048"
+#				hive.llap.io.memory.size: "512"
+#				hive.llap.io.threadpool.size: "1"
+#				hive.server2.tez.default.queues: "llap"
+#				hive.tez.container.size: "2048"
+#	- hive-interactive-env:
+#			properties:
+#				enable_hive_interactive: "true"
+#				llap_heap_size: "1024"
+#				hive_heapsize: "512"
   - tez-site:
       properties:
         tez.am.resource.memory.mb: "1024"
         tez.grouping.max-size: "939524096"
         tez.tez-ui.history-url.base: http://master1.cluster:8080/#/main/view/TEZ/tez_cluster_instance
-  - tez-interactive-site:
-      properties:
-        tez.am.resource.memory.mb: "1024"
-        tez.runtime.io.sort.mb: "546"
-        tez.runtime.unordered.output.buffer.size-mb: "122"
+#	- tez-interactive-site:
+#			properties:
+#				tez.am.resource.memory.mb: "1024"
+#				tez.runtime.io.sort.mb: "546"
+#				tez.runtime.unordered.output.buffer.size-mb: "122"
   - capacity-scheduler:
       properties:
         yarn.scheduler.capacity.default.minimum-user-limit-percent: "100"
@@ -54,20 +70,20 @@ configurations:
         yarn.scheduler.capacity.root.capacity: "100"
         yarn.scheduler.capacity.root.default.acl_administer_jobs: "*"
         yarn.scheduler.capacity.root.default.acl_submit_applications: "*"
-        yarn.scheduler.capacity.root.default.capacity: "0.0"
-        yarn.scheduler.capacity.root.default.maximum-capacity: "0.0"
+        yarn.scheduler.capacity.root.default.capacity: "20.0"
+        yarn.scheduler.capacity.root.default.maximum-capacity: "100.0"
         yarn.scheduler.capacity.root.default.state: RUNNING
-        yarn.scheduler.capacity.root.default.user-limit-factor: 1
+        yarn.scheduler.capacity.root.default.user-limit-factor: "5"
         yarn.scheduler.capacity.root.llap.acl_administer_queue: hive
         yarn.scheduler.capacity.root.llap.acl_submit_applications: hive
-        yarn.scheduler.capacity.root.llap.capacity: "100.0"
+        yarn.scheduler.capacity.root.llap.capacity: "80.0"
         yarn.scheduler.capacity.root.llap.maximum-am-resource-percent: "1"
         yarn.scheduler.capacity.root.llap.maximum-capacity: "100.0"
         yarn.scheduler.capacity.root.llap.minimum-user-limit-percent: "100"
         yarn.scheduler.capacity.root.llap.ordering-policy: fifo
         yarn.scheduler.capacity.root.llap.priority: "10"
         yarn.scheduler.capacity.root.llap.state: RUNNING
-        yarn.scheduler.capacity.root.llap.user-limit-factor: "1"
+        yarn.scheduler.capacity.root.llap.user-limit-factor: "2"
         yarn.scheduler.capacity.root.ordering-policy: priority-utilization
         yarn.scheduler.capacity.root.queues: default,llap
 host_groups:
@@ -91,14 +107,15 @@ host_groups:
     - name: METRICS_MONITOR
     - name: METRICS_GRAFANA
     - name: NAMENODE
-    - name: SECONDARY_NAMENODE
+    - name: ZKFC
+    - name: JOURNALNODE
     - name: HDFS_CLIENT
     - name: HCAT
     - name: WEBHCAT_SERVER
     - name: HIVE_CLIENT
     - name: HIVE_METASTORE
     - name: HIVE_SERVER
-    - name: HIVE_SERVER_INTERACTIVE
+#    - name: HIVE_SERVER_INTERACTIVE
     - name: MYSQL_SERVER
     - name: HISTORYSERVER
     - name: MAPREDUCE2_CLIENT
@@ -111,6 +128,36 @@ host_groups:
     - name: YARN_CLIENT
     - name: ZOOKEEPER_CLIENT
     - name: ZOOKEEPER_SERVER
+    cardinality: 1
+  - name: master2
+    components:
+    - name: NAMENODE
+    - name: ZKFC
+    - name: JOURNALNODE
+    - name: ZOOKEEPER_SERVER
+    - name: HDFS_CLIENT
+    - name: HIVE_CLIENT
+    - name: MAPREDUCE2_CLIENT
+    - name: SQOOP
+    - name: PIG
+    - name: TEZ_CLIENT
+    - name: YARN_CLIENT
+    - name: ZOOKEEPER_CLIENT
+    - name: METRICS_MONITOR
+    cardinality: 1
+  - name: master3
+    components:
+    - name: JOURNALNODE
+    - name: ZOOKEEPER_SERVER
+    - name: HDFS_CLIENT
+    - name: HIVE_CLIENT
+    - name: MAPREDUCE2_CLIENT
+    - name: SQOOP
+    - name: PIG
+    - name: TEZ_CLIENT
+    - name: YARN_CLIENT
+    - name: ZOOKEEPER_CLIENT
+    - name: METRICS_MONITOR
     cardinality: 1
   - name: worker
     components: 

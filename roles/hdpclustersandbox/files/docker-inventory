@@ -4,4 +4,7 @@ master1 ansible_host=master1.cluster  ansible_user=root ansible_ssh_pass=passwor
 [agent]
 edge ansible_host=edge.cluster  ansible_user=root ansible_ssh_pass=password
 master1 ansible_host=master1.cluster  ansible_user=root ansible_ssh_pass=password
+master2 ansible_host=master2.cluster  ansible_user=root ansible_ssh_pass=password
+master3 ansible_host=master3.cluster  ansible_user=root ansible_ssh_pass=password
 worker1 ansible_host=worker1.cluster  ansible_user=root ansible_ssh_pass=password
+worker2 ansible_host=worker2.cluster  ansible_user=root ansible_ssh_pass=password

@@ -1,5 +1,10 @@
 blueprint: sandbox
 default_password: sandbox
+configurations:
+- hadoop-env:
+    properties:
+      dfs_ha_initial_namenode_active: master1.cluster
+      dfs_ha_initial_namenode_standby: master2.cluster
 host_groups:
 - name: edge
   hosts:
@@ -7,6 +12,13 @@ host_groups:
 - name: master1
   hosts:
     - fqdn: master1.cluster
+- name: master2
+  hosts:
+    - fqdn: master2.cluster
+- name: master3
+  hosts:
+    - fqdn: master3.cluster
 - name: worker
   hosts:
     - fqdn: worker1.cluster
+    - fqdn: worker2.cluster

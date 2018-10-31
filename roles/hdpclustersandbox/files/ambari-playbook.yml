@@ -25,6 +25,8 @@
         - wget
         - curl
         - which
+        - openssh-clients
+        - openssh
 
   - name: Copy ambari initialization script
     copy:
@@ -87,11 +89,19 @@
         - wget
         - curl
         - which
+        - openssh-clients
+        - openssh
 
   - name: Copy ambari-agent config
     copy:
       src: ambari-agent.ini
       dest: /etc/ambari-agent/conf/ambari-agent.ini
+
+  - name: Disable python cert verification
+    copy:
+      src: cert-verification.cfg
+      dest: /etc/python/cert-verification.cfg
+
 
   - name: Setup ambari-agent
     systemd:
