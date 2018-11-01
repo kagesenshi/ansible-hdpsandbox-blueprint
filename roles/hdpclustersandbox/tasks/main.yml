@@ -82,6 +82,7 @@
       - name: cluster
         ipv4_address: "{{ item.ip }}"
     purge_networks: yes
+    restart_policy: always
   with_items:
     - name: edge
       ip: 172.20.10.10

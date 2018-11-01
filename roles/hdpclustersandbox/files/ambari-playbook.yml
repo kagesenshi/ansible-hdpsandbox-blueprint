@@ -64,7 +64,6 @@
       state: drained
       timeout: 600
   
-  
 - hosts: agent
   tasks: 
 
