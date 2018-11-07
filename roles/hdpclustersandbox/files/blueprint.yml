@@ -13,6 +13,12 @@ configurations:
         hadoop_heapsize: "512"
         namenode_heapsize: 512m
         dtnode_heapsize: 512m
+  - mapred-site:
+      properties:
+        mapreduce.map.java.opts: "-Xmx1024m"
+        mapreduce.reduce.java.opts: "-Xmx1024"
+        mapreduce.map.memory.mb: "1152"
+        mapreduce.task.io.sort.mb: "644"
   - hdfs-site:
       properties:
         dfs.replication: "1"
