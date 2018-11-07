@@ -1,4 +1,4 @@
-- hosts: ambari
+- hosts: all
   tasks:
 
   - name: install ambari repo
@@ -16,15 +16,34 @@
         name: "{{ packages }}"
     vars:
         packages:
-        - ambari-server
-        - postgresql-server
-        - postgresql-jdbc
-        - mysql-connector-java
         - initscripts
         - net-tools
         - wget
         - curl
         - which
+        - openssh-clients
+        - openssh
+        - sudo
+        - screen
+
+  - name: create user admin
+    user:
+      name: admin
+      password: $6$hdp$hN2cUtEK9G.dFvm08GYG7g7pizaK0ZJdwH5k3aCkmI5FRzrLAl84gKI0xrfLpyD0Uwv6L7HRd2kNfLZQxJ7V40
+
+
+
+- hosts: ambari
+  tasks:
+
+  - yum:
+        name: "{{ packages }}"
+    vars:
+        packages:
+        - ambari-server
+        - postgresql-server
+        - postgresql-jdbc
+        - mysql-connector-java
 
   - name: Copy ambari initialization script
     copy:
@@ -36,12 +55,7 @@
     args:
       creates: /var/ambari-init-executed
 
-  - name: install mysql jdbc driver
-    command: ln -s /usr/share/java/mysql-connector-java.jar
-    args:
-      chdir: /var/lib/ambari-server/resources
-      creates: /var/lib/ambari-server/resources/mysql-connector-java.jar
-      
+
   - name: Setup postgresql
     systemd:
       name: postgresql.service
@@ -61,41 +75,42 @@
       delay: 10
       state: drained
       timeout: 600
-  
+
+  - name: install mysql jdbc driver
+    command: ambari-server setup --jdbc-db=mysql --jdbc-driver /usr/share/java/mysql-connector-java.jar
+    args:
+      creates: /var/lib/ambari-server/resources/mysql-connector-java.jar
+
+  - name: install postgresql jdbc driver
+    command: ambari-server setup --jdbc-db=postgres --jdbc-driver /usr/share/java/postgresql-jdbc.jar
+    args:
+      creates: /var/lib/ambari-server/resources/postgresql-jdbc.jar
+
+
+
   
 - hosts: agent
   tasks: 
-
-  - name: install ambari repo
-    get_url:
-        url: http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.6.2.2/ambari.repo
-        dest: /etc/yum.repos.d/ambari.repo
-
-  - yum:
-        name: "{{ packages }}"
-    vars:
-        packages:
-        - epel-release
 
   - yum:
         name: "{{ packages }}"
     vars:
         packages:
         - ambari-agent
-        - initscripts
-        - net-tools
-        - wget
-        - curl
-        - which
 
   - name: Copy ambari-agent config
     copy:
       src: ambari-agent.ini
       dest: /etc/ambari-agent/conf/ambari-agent.ini
 
+  - name: Disable python cert verification
+    copy:
+      src: cert-verification.cfg
+      dest: /etc/python/cert-verification.cfg
+
   - name: Setup ambari-agent
     systemd:
       name: ambari-agent.service
       state: started
       enabled: yes
- 
+

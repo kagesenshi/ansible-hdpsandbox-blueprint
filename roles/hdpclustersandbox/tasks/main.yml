@@ -82,6 +82,7 @@
       - name: cluster
         ipv4_address: "{{ item.ip }}"
     purge_networks: yes
+    restart_policy: always
   with_items:
     - name: edge
       ip: 172.20.10.10
@@ -133,11 +134,14 @@
     - deploy-blueprint.py
     - blueprint.yml
     - cluster.yml
+    - cert-verification.cfg
 
 - name: deploy ambari
   command:  ansible-playbook -i docker-inventory ambari-playbook.yml
   args:
     chdir: /root
+  environment:
+    ANSIBLE_GATHER_TIMEOUT: 60
 
 - name: deploy blueprint
   command: python /root/deploy-blueprint.py

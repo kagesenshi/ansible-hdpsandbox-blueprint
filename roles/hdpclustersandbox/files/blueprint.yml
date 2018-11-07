@@ -7,6 +7,7 @@ configurations:
       properties:
         hadoop.proxyuser.root.hosts: "*"
         hadoop.proxyuser.root.groups: "*"
+        hadoop.http.staticuser.user: yarn
   - hadoop-env:
       properties:
         hadoop_heapsize: "512"
@@ -15,9 +16,25 @@ configurations:
   - hdfs-site:
       properties:
         dfs.replication: "1"
+        dfs.namenode.handler.count: "25"
+        dfs.namenode.inode.attributes.provider.class: "org.apache.ranger.authorization.hadoop.RangerHdfsAuthorizer"
   - yarn-site:
       properties:
         yarn.resourcemanager.scheduler.monitor.enable: "true"
+        yarn.acl.enable: "true"
+        yarn.authorization-provider: "org.apache.ranger.authorization.yarn.authorizer.RangerYarnAuthorizer"
+  - hiveserver2-site:
+      properties:
+        hive.security.authorization.enabled: "true"
+        hive.security.authorization.manager: "org.apache.ranger.authorization.hive.authorizer.RangerHiveAuthorizerFactory"
+        hive.conf.restricted.list: "hive.security.authenticator.manager,hive.security.authorization.manager,hive.security.metastore.authorization.manager,hive.security.metastore.authenticator.manager,hive.users.in.admin.role,hive.server2.xsrf.filter.enabled,hive.security.authorization.enabled"
+  - hive-env:
+      properties:
+        hive_security_authorization: Ranger
+  - hive-site:
+      properties:
+        hive.security.authorization.enabled: "true"
+        hive.server2.enable.doAs: "false"
   - hive-interactive-site:
       properties:
         hive.auto.convert.join.noconditionaltask.size: "572522496"
@@ -54,22 +71,56 @@ configurations:
         yarn.scheduler.capacity.root.capacity: "100"
         yarn.scheduler.capacity.root.default.acl_administer_jobs: "*"
         yarn.scheduler.capacity.root.default.acl_submit_applications: "*"
-        yarn.scheduler.capacity.root.default.capacity: "0.0"
-        yarn.scheduler.capacity.root.default.maximum-capacity: "0.0"
+        yarn.scheduler.capacity.root.default.capacity: "20.0"
+        yarn.scheduler.capacity.root.default.maximum-capacity: "100.0"
         yarn.scheduler.capacity.root.default.state: RUNNING
-        yarn.scheduler.capacity.root.default.user-limit-factor: 1
+        yarn.scheduler.capacity.root.default.user-limit-factor: 5
         yarn.scheduler.capacity.root.llap.acl_administer_queue: hive
         yarn.scheduler.capacity.root.llap.acl_submit_applications: hive
-        yarn.scheduler.capacity.root.llap.capacity: "100.0"
+        yarn.scheduler.capacity.root.llap.capacity: "80.0"
         yarn.scheduler.capacity.root.llap.maximum-am-resource-percent: "1"
         yarn.scheduler.capacity.root.llap.maximum-capacity: "100.0"
         yarn.scheduler.capacity.root.llap.minimum-user-limit-percent: "100"
         yarn.scheduler.capacity.root.llap.ordering-policy: fifo
         yarn.scheduler.capacity.root.llap.priority: "10"
         yarn.scheduler.capacity.root.llap.state: RUNNING
-        yarn.scheduler.capacity.root.llap.user-limit-factor: "1"
+        yarn.scheduler.capacity.root.llap.user-limit-factor: "2"
         yarn.scheduler.capacity.root.ordering-policy: priority-utilization
         yarn.scheduler.capacity.root.queues: default,llap
+  - admin-properties:
+      properties:
+        db_root_user: postgres
+        DB_FLAVOR: POSTGRES
+        db_host: master1.cluster
+        policymgr_external_url: http://master1.cluster:6080
+  - ranger-admin-site:
+      properties:
+        ranger.jpa.jdbc.url: jdbc:postgresql://master1.cluster:5432/ranger
+        ranger.jpa.jdbc.driver: org.postgresql.Driver
+  - ranger-hdfs-plugin-properties:
+      properties:
+        ranger-hdfs-plugin-enabled: "yes"
+        REPOSITORY_CONFIG_USERNAME: "hdfs"
+  - ranger-env:
+      properties:
+        ranger-yarn-plugin-enabled: "Yes"
+        ranger-hdfs-plugin-enabled: "Yes"
+        ranger-hive-plugin-enabled: "Yes"
+        ranger_admin_password: rangeradmin123
+        is_solrCloud_enabled: "true"
+        ranger_privelege_user_jdbc_url: jdbc:postgresql://master1.cluster:5432/postgres
+  - ranger-hdfs-security:
+      properties:
+        ranger.plugin.hdfs.policy.rest.url: http://master1.cluster:6080
+  - ranger-yarn-plugin-properties:
+      properties:
+        ranger-yarn-plugin-enabled: "yes"
+  - ranger-yarn-security:
+      properties:
+        ranger.plugin.yarn.policy.rest.url:  http://master1.cluster:6080
+  - ranger-hive-security:
+      properties: 
+        ranger.plugin.hive.policy.rest.url: http://master1.cluster:6080
 host_groups:
   - name: edge
     components:
@@ -102,6 +153,9 @@ host_groups:
     - name: MYSQL_SERVER
     - name: HISTORYSERVER
     - name: MAPREDUCE2_CLIENT
+    - name: RANGER_ADMIN
+    - name: RANGER_TAGSYNC
+    - name: RANGER_USERSYNC
     - name: SLIDER
     - name: SQOOP
     - name: PIG
