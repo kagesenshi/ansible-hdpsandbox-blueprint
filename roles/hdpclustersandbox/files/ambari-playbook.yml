@@ -114,3 +114,28 @@
       state: started
       enabled: yes
 
+
+- hosts: edge
+  tasks:
+
+  - yum: 
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - python-sqlalchemy
+      - python-saslwrapper
+      - python-pip
+      - gcc-c++
+      - cyrus-sasl-devel
+      - cyrus-sasl-gssapi
+      - cyrus-sasl-sql
+      - cyrus-sasl-gs2
+      - cyrus-sasl-ldap
+      - cyrus-sasl-md5
+      - cyrus-sasl-plain
+      - python-devel
+
+  - name: install pyhive
+    command: pip install pyhive[hive]
+    args:
+      creates: /usr/lib/python2.7/site-packages/pyhive/common.py

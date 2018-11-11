@@ -41,31 +41,31 @@ configurations:
       properties:
         hive.security.authorization.enabled: "true"
         hive.server2.enable.doAs: "false"
-  - hive-interactive-site:
-      properties:
-        hive.auto.convert.join.noconditionaltask.size: "572522496"
-        hive.server2.tez.sessions.per.default.queue: "1"
-        hive.llap.daemon.queue.name: "llap"
-        hive.llap.daemon.yarn.container.mb: "2048"
-        hive.llap.io.memory.size: "512"
-        hive.llap.io.threadpool.size: "1"
-        hive.server2.tez.default.queues: "llap"
-        hive.tez.container.size: "2048"
-  - hive-interactive-env:
-      properties:
-        enable_hive_interactive: "true"
-        llap_heap_size: "1024"
-        hive_heapsize: "512"
+#  - hive-interactive-site:
+#      properties:
+#        hive.auto.convert.join.noconditionaltask.size: "572522496"
+#        hive.server2.tez.sessions.per.default.queue: "1"
+#        hive.llap.daemon.queue.name: "llap"
+#        hive.llap.daemon.yarn.container.mb: "2048"
+#        hive.llap.io.memory.size: "512"
+#        hive.llap.io.threadpool.size: "1"
+#        hive.server2.tez.default.queues: "llap"
+#        hive.tez.container.size: "2048"
+#  - hive-interactive-env:
+#      properties:
+#        enable_hive_interactive: "true"
+#        llap_heap_size: "1024"
+#        hive_heapsize: "512"
   - tez-site:
       properties:
         tez.am.resource.memory.mb: "1024"
         tez.grouping.max-size: "939524096"
         tez.tez-ui.history-url.base: http://master1.cluster:8080/#/main/view/TEZ/tez_cluster_instance
-  - tez-interactive-site:
-      properties:
-        tez.am.resource.memory.mb: "1024"
-        tez.runtime.io.sort.mb: "546"
-        tez.runtime.unordered.output.buffer.size-mb: "122"
+#  - tez-interactive-site:
+#      properties:
+#        tez.am.resource.memory.mb: "1024"
+#        tez.runtime.io.sort.mb: "546"
+#        tez.runtime.unordered.output.buffer.size-mb: "122"
   - capacity-scheduler:
       properties:
         yarn.scheduler.capacity.default.minimum-user-limit-percent: "100"
@@ -136,6 +136,7 @@ host_groups:
     - name: SQOOP
     - name: PIG
     - name: TEZ_CLIENT
+    - name: SPARK2_CLIENT
     - name: YARN_CLIENT
     - name: ZOOKEEPER_CLIENT
     - name: METRICS_MONITOR
@@ -155,10 +156,11 @@ host_groups:
     - name: HIVE_CLIENT
     - name: HIVE_METASTORE
     - name: HIVE_SERVER
-    - name: HIVE_SERVER_INTERACTIVE
+#    - name: HIVE_SERVER_INTERACTIVE
     - name: MYSQL_SERVER
     - name: HISTORYSERVER
     - name: MAPREDUCE2_CLIENT
+    - name: SPARK2_JOBHISTORYSERVER
     - name: RANGER_ADMIN
     - name: RANGER_TAGSYNC
     - name: RANGER_USERSYNC
@@ -176,5 +178,26 @@ host_groups:
     components: 
     - name: DATANODE
     - name: NODEMANAGER
-
-    
+    - name: HDFS_CLIENT
+    - name: HIVE_CLIENT
+    - name: MAPREDUCE2_CLIENT
+    - name: SQOOP
+    - name: PIG
+    - name: TEZ_CLIENT
+    - name: SPARK2_CLIENT
+    - name: YARN_CLIENT
+    - name: ZOOKEEPER_CLIENT
+    - name: METRICS_MONITOR
+  - name: stub
+    components:
+    - name: HDFS_CLIENT
+    - name: HIVE_CLIENT
+    - name: MAPREDUCE2_CLIENT
+    - name: SQOOP
+    - name: PIG
+    - name: TEZ_CLIENT
+    - name: SPARK2_CLIENT
+    - name: YARN_CLIENT
+    - name: ZOOKEEPER_CLIENT
+    - name: METRICS_MONITOR
+   

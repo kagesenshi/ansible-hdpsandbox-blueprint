@@ -34,6 +34,7 @@
     - squid
     - python-requests
     - python2-pyyaml
+    - haproxy
 
 - name: Setup cockpit
   systemd:
@@ -59,6 +60,14 @@
     state: started
     enabled: yes
 
+- name: enable haproxy
+  systemd:
+    name: haproxy
+    state: started
+    enabled: yes
+
+
+
 - name: load systemd docker image
   docker_image:
     name: kagesenshi/centos-systemd-sshd
@@ -83,6 +92,8 @@
         ipv4_address: "{{ item.ip }}"
     purge_networks: yes
     restart_policy: always
+    tmpfs: 
+      - /mnt/ramdisk:rw,noexec,nosuid,size=128m
   with_items:
     - name: edge
       ip: 172.20.10.10
@@ -107,6 +118,13 @@
     src: ssh_config
     dest: /etc/ssh/ssh_config
     mode: 0644
+
+- name: install haproxy config
+  copy:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+    mode: 0644
+
 
 - name: setup squid
   systemd:

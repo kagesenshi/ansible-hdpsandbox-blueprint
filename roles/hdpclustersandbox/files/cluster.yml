@@ -10,3 +10,7 @@ host_groups:
 - name: worker
   hosts:
     - fqdn: worker1.cluster
+- name: stub
+  hosts:
+    - fqdn: master2.cluster
+    - fqdn: master3.cluster
