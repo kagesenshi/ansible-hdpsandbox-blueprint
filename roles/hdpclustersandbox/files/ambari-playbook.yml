@@ -32,6 +32,14 @@
       password: $6$hdp$hN2cUtEK9G.dFvm08GYG7g7pizaK0ZJdwH5k3aCkmI5FRzrLAl84gKI0xrfLpyD0Uwv6L7HRd2kNfLZQxJ7V40
 
 
+  - name: Disable python cert verification
+    copy:
+      src: cert-verification.cfg
+      dest: /etc/python/cert-verification.cfg
+
+
+
+
 
 - hosts: ambari
   tasks:
@@ -102,11 +110,6 @@
     copy:
       src: ambari-agent.ini
       dest: /etc/ambari-agent/conf/ambari-agent.ini
-
-  - name: Disable python cert verification
-    copy:
-      src: cert-verification.cfg
-      dest: /etc/python/cert-verification.cfg
 
   - name: Setup ambari-agent
     systemd:

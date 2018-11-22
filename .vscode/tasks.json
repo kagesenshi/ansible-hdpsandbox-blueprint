@@ -1,0 +1,14 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Deploy playbook",
+            "type": "shell",
+            "command": "ansible-playbook -i inventory.yml playbook.yml",
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}
