@@ -37,6 +37,12 @@
       src: cert-verification.cfg
       dest: /etc/python/cert-verification.cfg
 
+  - name: install fakemail.py
+    get_url:
+      url: https://raw.githubusercontent.com/matschaffer/fakemail/master/python/fakemail.py
+      dest: /usr/bin/fakemail.py
+      mode: 0755
+
 
 
 
