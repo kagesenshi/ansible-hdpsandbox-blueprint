@@ -1,0 +1,19 @@
+- host: edge
+  tasks:
+  
+    - name: create admin's HDFS home directory
+      command: hdfs dfs -mkdir -p /user/admin
+      become: yes
+      become_user: hdfs
+
+    - name: set admin home directory ownership
+      command: hdfs dfs -chown admin:admin /user/admin
+      become: yes
+      become_user: hdfs
+
+    # upload sample database 'zomato-restaurant-data'
+    - name: upload sample hive table
+
+    # setup hive to allow admin to access default db
+
+    # stop ambari metrics and set to maintenance
